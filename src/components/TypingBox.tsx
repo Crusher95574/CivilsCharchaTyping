@@ -32,35 +32,45 @@ export default function TypingBox({
         }
     }
 
+    const handlePaste = (e: React.ClipboardEvent) => {
+        e.preventDefault()
+    }
+
     return (
         <div className="space-y-4">
+
             {/* Highlighted Paragraph */}
-            <div className="p-4 bg-white border rounded leading-7 text-lg">
+            <div className="p-6 bg-gray-900 text-gray-200 rounded leading-8 text-lg font-mono">
                 {originalText.split("").map((char, index) => {
-                    let color = ""
+                    let className = ""
 
                     if (index < typedText.length) {
-                        color =
+                        className =
                             typedText[index] === char
-                                ? "text-green-600"
-                                : "text-red-600"
+                                ? "text-green-400"
+                                : "text-red-400"
+                    }
+
+                    if (index === typedText.length) {
+                        className += " bg-yellow-600 text-black"
                     }
 
                     return (
-                        <span key={index} className={color}>
+                        <span key={index} className={className}>
                             {char}
                         </span>
                     )
                 })}
             </div>
 
-            {/* Input Area */}
+            {/* Input */}
             <textarea
-                className="w-full p-4 border rounded text-lg"
+                className="w-full p-4 border rounded text-lg font-mono bg-gray-800 text-white"
                 rows={6}
                 value={typedText}
                 onChange={(e) => setTypedText(e.target.value)}
                 onKeyDown={handleKeyDown}
+                onPaste={handlePaste}
             />
         </div>
     )

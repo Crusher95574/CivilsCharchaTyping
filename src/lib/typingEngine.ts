@@ -5,6 +5,8 @@ export interface TypingStats {
   missingChars: number
   totalTyped: number
   totalErrors: number
+  correctWords: number
+  wrongWords: number
 }
 
 export function analyzeTyping(original: string, typed: string): TypingStats {
@@ -29,6 +31,17 @@ export function analyzeTyping(original: string, typed: string): TypingStats {
     }
   }
 
+  const originalWords = original.trim().split(/\s+/)
+  const typedWords = typed.trim().split(/\s+/)
+
+  let correctWords = 0
+  let wrongWords = 0
+
+  originalWords.forEach((word, index) => {
+    if (typedWords[index] === word) correctWords++
+    else wrongWords++
+  })
+
   return {
     correctChars: correct,
     wrongChars: wrong,
@@ -36,5 +49,7 @@ export function analyzeTyping(original: string, typed: string): TypingStats {
     missingChars: missing,
     totalTyped: typed.length,
     totalErrors: wrong + extra + missing,
+    correctWords,
+    wrongWords,
   }
 }

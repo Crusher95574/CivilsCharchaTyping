@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { analyzeTyping } from "@/lib/typingEngine"
 import {
     calculateGrossWPM,
@@ -12,7 +12,7 @@ import TypingBox from "@/components/TypingBox"
 import ResultCard from "@/components/ResultCard"
 
 const paragraph =
-    "The quick brown fox jumps over the lazy dog."
+    "The quick brown fox jumps over the lazy dog. This is a professional typing simulation test."
 
 export default function PracticePage() {
     const [typedText, setTypedText] = useState("")
@@ -28,6 +28,10 @@ export default function PracticePage() {
         ? calculateGrossWPM(liveStats.totalTyped, minutesElapsed)
         : 0
 
+    const cpm = liveStats
+        ? liveStats.totalTyped / minutesElapsed
+        : 0
+
     const accuracy = liveStats
         ? calculateAccuracy(
             liveStats.correctChars,
@@ -35,9 +39,11 @@ export default function PracticePage() {
         )
         : 0
 
+    const progress =
+        (typedText.length / paragraph.length) * 100
+
     const finishTest = () => {
         const stats = analyzeTyping(paragraph, typedText)
-
         const minutes = 1
 
         const gross = calculateGrossWPM(stats.totalTyped, minutes)
@@ -58,15 +64,26 @@ export default function PracticePage() {
 
     return (
         <div className="space-y-6">
+
             <h1 className="text-2xl font-bold">Practice Mode</h1>
 
             {!result && (
                 <>
-                    {/* Stats Panel */}
-                    <div className="flex gap-6 text-lg font-semibold">
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-300 rounded h-3">
+                        <div
+                            className="bg-green-500 h-3 rounded"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </div>
+
+                    {/* Live Stats */}
+                    <div className="flex flex-wrap gap-6 text-lg font-semibold">
                         {/* <div>Time: {time}s</div> */}
                         <div>WPM: {grossWPM.toFixed(2)}</div>
+                        <div>CPM: {cpm.toFixed(0)}</div>
                         <div>Accuracy: {accuracy.toFixed(2)}%</div>
+                        <div>Backspaces: {backspaceCount}</div>
                     </div>
 
                     <Timer
