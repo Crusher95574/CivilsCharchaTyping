@@ -17,7 +17,7 @@ export default function HomePage() {
           Practice Now
         </Link>
 
-        <Link href="/exam/ssc" className="btn-secondary">
+        <Link href="/exam" className="btn-secondary">
           Exam Mode
         </Link>
       </div>

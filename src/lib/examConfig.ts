@@ -28,4 +28,7 @@ export const examConfig = {
     language: "english",
     paragraphType: "railway"
   }
-}
+} as const
+
+
+export type ExamType = keyof typeof examConfig

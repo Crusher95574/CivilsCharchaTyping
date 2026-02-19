@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation"
 import { useState } from "react"
-import { examConfig } from "@/lib/examConfig"
+import { examConfig, ExamType } from "@/lib/examConfig"
 import { paragraphs } from "@/lib/paragraphs"
 import { analyzeTyping } from "@/lib/typingEngine"
 import {
@@ -17,16 +17,22 @@ import ResultCard from "@/components/ResultCard"
 export default function PracticeTypingPage() {
     const params = useParams()
 
-    const examKey = params.exam as string
+    const examKey = params.exam as ExamType
     const paragraphId = Number(params.paragraphId)
 
+    // ✅ Validate exam safely
+    if (!examKey || !(examKey in examConfig)) {
+        return <div className="p-6">Invalid Practice Link</div>
+    }
+
     const exam = examConfig[examKey]
+
     const paragraphData = paragraphs.find(
         (p) => p.id === paragraphId
     )
 
-    if (!exam || !paragraphData) {
-        return <div className="p-6">Invalid Practice Link</div>
+    if (!paragraphData) {
+        return <div className="p-6">Paragraph Not Found</div>
     }
 
     const paragraph = paragraphData.text
@@ -37,6 +43,7 @@ export default function PracticeTypingPage() {
     const [liveStats, setLiveStats] = useState<any>(null)
     const [backspaceCount, setBackspaceCount] = useState(0)
 
+    // ✅ Live Calculations
     const minutesElapsed =
         (exam.duration - time) / 60 || 1 / 60
 
@@ -54,23 +61,39 @@ export default function PracticeTypingPage() {
     const progress =
         (typedText.length / paragraph.length) * 100
 
+    // ✅ Finish Test (Final Calculation)
     const finishTest = () => {
         const stats = analyzeTyping(paragraph, typedText)
-        const minutes = exam.duration / 60
 
-        const gross = calculateGrossWPM(stats.totalTyped, minutes)
-        const net = calculateNetWPM(gross, stats.totalErrors, minutes)
+        const minutesTaken =
+            (exam.duration - time) / 60 || 1 / 60
+
+        const gross = calculateGrossWPM(
+            stats.totalTyped,
+            minutesTaken
+        )
+
+        const net = calculateNetWPM(
+            gross,
+            stats.totalErrors,
+            minutesTaken
+        )
+
         const finalAccuracy = calculateAccuracy(
             stats.correctChars,
             stats.totalTyped
         )
 
         setResult({
-            gross,
-            net,
+            grossWPM: gross,
+            netWPM: net,
             accuracy: finalAccuracy,
             backspaceCount,
-            ...stats,
+            originalText: paragraph,
+            typedText,
+            totalErrors: stats.totalErrors,
+            correctChars: stats.correctChars,
+            totalTyped: stats.totalTyped,
         })
     }
 
@@ -82,6 +105,7 @@ export default function PracticeTypingPage() {
 
             {!result && (
                 <>
+                    {/* Progress Bar */}
                     <div className="w-full bg-gray-300 rounded h-3">
                         <div
                             className="bg-green-500 h-3 rounded"
@@ -89,11 +113,12 @@ export default function PracticeTypingPage() {
                         />
                     </div>
 
+                    {/* Live Stats */}
                     <div className="flex gap-6 text-lg font-semibold">
-                        <div>Time: {time}s</div>
                         <div>WPM: {grossWPM.toFixed(2)}</div>
                         <div>Accuracy: {accuracy.toFixed(2)}%</div>
                         <div>Backspaces: {backspaceCount}</div>
+                        <div>Errors: {liveStats?.totalErrors || 0}</div>
                     </div>
 
                     <Timer
@@ -121,7 +146,11 @@ export default function PracticeTypingPage() {
                 </>
             )}
 
-            {result && <ResultCard result={result} />}
+            {result && (
+                <ResultCard
+                    result={result}
+                />
+            )}
         </div>
     )
 }
