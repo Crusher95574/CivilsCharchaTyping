@@ -1,116 +1,118 @@
 "use client"
 
 import { useState } from "react"
-import { analyzeTyping } from "@/lib/typingEngine"
-import {
-    calculateGrossWPM,
-    calculateNetWPM,
-    calculateAccuracy,
-} from "@/lib/calculate"
-import Timer from "@/components/Timer"
-import TypingBox from "@/components/TypingBox"
-import ResultCard from "@/components/ResultCard"
+import { useRouter } from "next/navigation"
+import { examConfig } from "@/lib/examConfig"
+import { paragraphs } from "@/lib/paragraphs"
 
-const paragraph =
-    "The quick brown fox jumps over the lazy dog. This is a professional typing simulation test."
+type View = "examList" | "paragraphList" | "overview"
 
 export default function PracticePage() {
-    const [typedText, setTypedText] = useState("")
-    const [time, setTime] = useState(60)
-    const [result, setResult] = useState<any>(null)
+  const router = useRouter()
 
-    const [liveStats, setLiveStats] = useState<any>(null)
-    const [backspaceCount, setBackspaceCount] = useState(0)
+  const [view, setView] = useState<View>("examList")
+  const [selectedExamKey, setSelectedExamKey] = useState<string | null>(null)
+  const [selectedParagraphId, setSelectedParagraphId] = useState<number | null>(null)
 
-    const minutesElapsed = (60 - time) / 60 || 1 / 60
+  const selectedExam =
+    selectedExamKey ? examConfig[selectedExamKey] : null
 
-    const grossWPM = liveStats
-        ? calculateGrossWPM(liveStats.totalTyped, minutesElapsed)
-        : 0
+  // STEP 3 → Overview Screen
+  if (view === "overview" && selectedExam && selectedParagraphId) {
+    return (
+      <div className="max-w-3xl mx-auto p-6 space-y-4">
+        <h1 className="text-2xl font-bold">
+          {selectedExam.name}
+        </h1>
 
-    const cpm = liveStats
-        ? liveStats.totalTyped / minutesElapsed
-        : 0
+        <div className="bg-gray-100 p-6 rounded-lg space-y-2">
+          <p><strong>Duration:</strong> {selectedExam.duration / 60} minutes</p>
+          <p><strong>Backspace Allowed:</strong> {selectedExam.backspaceAllowed ? "Yes" : "No"}</p>
+          <p><strong>Passing WPM:</strong> {selectedExam.passingWpm}</p>
+          <p><strong>Passing Accuracy:</strong> {selectedExam.passingAccuracy}%</p>
+        </div>
 
-    const accuracy = liveStats
-        ? calculateAccuracy(
-            liveStats.correctChars,
-            liveStats.totalTyped
-        )
-        : 0
+        <button
+          onClick={() =>
+            router.push(
+              `/practice/${selectedExamKey}/${selectedParagraphId}`
+            )
+          }
+          className="w-full bg-black text-white p-3 rounded"
+        >
+          Start Practice
+        </button>
 
-    const progress =
-        (typedText.length / paragraph.length) * 100
+        <button
+          onClick={() => setView("paragraphList")}
+          className="w-full border p-3 rounded"
+        >
+          Back
+        </button>
+      </div>
+    )
+  }
 
-    const finishTest = () => {
-        const stats = analyzeTyping(paragraph, typedText)
-        const minutes = 1
-
-        const gross = calculateGrossWPM(stats.totalTyped, minutes)
-        const net = calculateNetWPM(gross, stats.totalErrors, minutes)
-        const finalAccuracy = calculateAccuracy(
-            stats.correctChars,
-            stats.totalTyped
-        )
-
-        setResult({
-            gross,
-            net,
-            accuracy: finalAccuracy,
-            backspaceCount,
-            ...stats,
-        })
-    }
+  // STEP 2 → Paragraph List
+  if (view === "paragraphList" && selectedExam) {
+    const examParagraphs = paragraphs.filter(
+      (p) => p.type === selectedExam.paragraphType
+    )
 
     return (
-        <div className="space-y-6">
+      <div className="max-w-5xl mx-auto p-6">
+        <button
+          onClick={() => setView("examList")}
+          className="mb-4 underline"
+        >
+          ← Back to Exams
+        </button>
 
-            <h1 className="text-2xl font-bold">Practice Mode</h1>
+        <h1 className="text-2xl font-bold mb-6">
+          {selectedExam.name} Paragraphs
+        </h1>
 
-            {!result && (
-                <>
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-300 rounded h-3">
-                        <div
-                            className="bg-green-500 h-3 rounded"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </div>
-
-                    {/* Live Stats */}
-                    <div className="flex flex-wrap gap-6 text-lg font-semibold">
-                        {/* <div>Time: {time}s</div> */}
-                        <div>WPM: {grossWPM.toFixed(2)}</div>
-                        <div>CPM: {cpm.toFixed(0)}</div>
-                        <div>Accuracy: {accuracy.toFixed(2)}%</div>
-                        <div>Backspaces: {backspaceCount}</div>
-                    </div>
-
-                    <Timer
-                        time={time}
-                        setTime={setTime}
-                        onTimeUp={finishTest}
-                    />
-
-                    <TypingBox
-                        originalText={paragraph}
-                        typedText={typedText}
-                        setTypedText={setTypedText}
-                        setLiveStats={setLiveStats}
-                        backspaceCount={backspaceCount}
-                        setBackspaceCount={setBackspaceCount}
-                    />
-
-                    <button
-                        onClick={finishTest}
-                        className="bg-blue-600 text-white px-4 py-2 rounded"
-                    >
-                        Submit
-                    </button>
-                </>
-            )}
-
-            {result && <ResultCard result={result} />}
-        </div>
+        {examParagraphs.map((p) => (
+          <div
+            key={p.id}
+            onClick={() => {
+              setSelectedParagraphId(p.id)
+              setView("overview")
+            }}
+            className="border p-4 mb-3 rounded cursor-pointer hover:bg-gray-50"
+          >
+            {p.text.slice(0, 150)}...
+          </div>
+        ))}
+      </div>
     )
+  }
+
+  // STEP 1 → Exam Cards
+  return (
+    <div className="max-w-5xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">
+        Choose Exam to Practice
+      </h1>
+
+      <div className="grid grid-cols-2 gap-6">
+        {Object.entries(examConfig).map(([key, exam]) => (
+          <div
+            key={key}
+            onClick={() => {
+              setSelectedExamKey(key)
+              setView("paragraphList")
+            }}
+            className="border p-6 rounded-xl cursor-pointer hover:shadow-md transition"
+          >
+            <h2 className="text-xl font-semibold mb-2">
+              {exam.name}
+            </h2>
+            <p>Duration: {exam.duration / 60} mins</p>
+            <p>Passing WPM: {exam.passingWpm}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
