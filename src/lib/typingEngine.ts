@@ -35,11 +35,46 @@ export function analyzeTyping(original: string, typed: string): TypingStats {
     }
   }
 
-  const totalErrors = dp[m][n]
-  const correctChars = typed.length - totalErrors
-  const totalTyped = typed.length
+  let i = m
+  let j = n
 
-  // Word-level comparison
+  let correct = 0
+  let wrong = 0
+  let extra = 0
+  let missing = 0
+
+  // 🔥 Trace back to classify operations
+  while (i > 0 || j > 0) {
+    if (
+      i > 0 &&
+      j > 0 &&
+      original[i - 1] === typed[j - 1]
+    ) {
+      correct++
+      i--
+      j--
+    } else if (
+      i > 0 &&
+      j > 0 &&
+      dp[i][j] === dp[i - 1][j - 1] + 1
+    ) {
+      wrong++        // substitution
+      i--
+      j--
+    } else if (
+      j > 0 &&
+      dp[i][j] === dp[i][j - 1] + 1
+    ) {
+      extra++        // insertion
+      j--
+    } else {
+      missing++      // deletion
+      i--
+    }
+  }
+
+  const totalErrors = wrong + extra + missing
+
   const originalWords = original.trim().split(/\s+/)
   const typedWords = typed.trim().split(/\s+/)
 
@@ -52,11 +87,11 @@ export function analyzeTyping(original: string, typed: string): TypingStats {
   })
 
   return {
-    correctChars: correctChars > 0 ? correctChars : 0,
-    wrongChars: totalErrors,
-    extraChars: 0,
-    missingChars: 0,
-    totalTyped,
+    correctChars: correct,
+    wrongChars: wrong,
+    extraChars: extra,
+    missingChars: missing,
+    totalTyped: typed.length,
     totalErrors,
     correctWords,
     wrongWords,

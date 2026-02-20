@@ -143,7 +143,7 @@ export default function ExamTypingPage() {
 
             {/* Result */}
             {isSubmitted && result && (
-                <div className="border p-6 rounded shadow bg-white space-y-3">
+                <div className="border p-6 rounded shadow bg-white space-y-6">
                     <h2
                         className={`text-2xl font-bold ${result.passed ? "text-green-600" : "text-red-600"
                             }`}
@@ -155,8 +155,122 @@ export default function ExamTypingPage() {
                     <p>Net WPM: {result.net.toFixed(2)}</p>
                     <p>Accuracy: {result.accuracy.toFixed(2)}%</p>
                     <p>Total Errors: {result.totalErrors}</p>
+
+                    {/* 🔥 Professional SSC-Level Highlight */}
+                    <div>
+                        <h3 className="font-semibold mb-2">Typing Review:</h3>
+
+                        <div className="p-4 bg-gray-100 rounded font-mono whitespace-pre-wrap leading-7">
+                            {(() => {
+                                const original = paragraph.text
+                                const typed = input
+
+                                const m = original.length
+                                const n = typed.length
+
+                                const dp: number[][] = Array.from({ length: m + 1 }, () =>
+                                    Array(n + 1).fill(0)
+                                )
+
+                                for (let i = 0; i <= m; i++) dp[i][0] = i
+                                for (let j = 0; j <= n; j++) dp[0][j] = j
+
+                                for (let i = 1; i <= m; i++) {
+                                    for (let j = 1; j <= n; j++) {
+                                        if (original[i - 1] === typed[j - 1]) {
+                                            dp[i][j] = dp[i - 1][j - 1]
+                                        } else {
+                                            dp[i][j] =
+                                                1 +
+                                                Math.min(
+                                                    dp[i - 1][j],     // deletion
+                                                    dp[i][j - 1],     // insertion
+                                                    dp[i - 1][j - 1]  // substitution
+                                                )
+                                        }
+                                    }
+                                }
+
+                                // Backtracking
+                                let i = m
+                                let j = n
+                                const resultSpans: React.ReactNode[] = []
+
+
+                                while (i > 0 || j > 0) {
+                                    if (
+                                        i > 0 &&
+                                        j > 0 &&
+                                        original[i - 1] === typed[j - 1]
+                                    ) {
+                                        resultSpans.unshift(
+                                            <span key={`${i}-${j}`} className="text-green-600">
+                                                {typed[j - 1]}
+                                            </span>
+                                        )
+                                        i--
+                                        j--
+                                    } else if (
+                                        i > 0 &&
+                                        j > 0 &&
+                                        dp[i][j] === dp[i - 1][j - 1] + 1
+                                    ) {
+                                        resultSpans.unshift(
+                                            <span key={`${i}-${j}`} className="bg-red-500 text-white">
+                                                {typed[j - 1]}
+                                            </span>
+                                        )
+                                        i--
+                                        j--
+                                    } else if (j > 0 && dp[i][j] === dp[i][j - 1] + 1) {
+                                        resultSpans.unshift(
+                                            <span key={`${i}-${j}`} className="bg-yellow-400 text-black">
+                                                {typed[j - 1]}
+                                            </span>
+                                        )
+                                        j--
+                                    } else if (i > 0 && dp[i][j] === dp[i - 1][j] + 1) {
+                                        resultSpans.unshift(
+                                            <span key={`${i}-${j}`} className="bg-gray-400 text-white line-through">
+                                                {original[i - 1]}
+                                            </span>
+                                        )
+                                        i--
+                                    }
+                                }
+
+                                return resultSpans
+                            })()}
+                        </div>
+                    </div>
+
+                    {/* 🔥 Error Explanation Legend */}
+                    <div className="mt-4 p-4 bg-gray-50 border rounded space-y-2">
+                        <h4 className="font-semibold">Error Legend:</h4>
+                        <div className="flex flex-wrap gap-4">
+                            <div className="flex items-center gap-1">
+                                <span className="inline-block w-6 h-6 bg-green-600"></span>
+                                <span>Correct character</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="inline-block w-6 h-6 bg-red-500"></span>
+                                <span>Full mistake (wrong/substituted character)</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="inline-block w-6 h-6 bg-yellow-400"></span>
+                                <span>Extra character typed (not in original)</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="inline-block w-6 h-6 bg-gray-400 line-through"></span>
+                                <span>Missing character (was in original, not typed)</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             )}
+
+
         </div>
     )
 }
