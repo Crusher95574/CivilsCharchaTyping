@@ -14,7 +14,7 @@ export default function Navbar() {
                     <Link href="/practice" className="hover:text-blue-600">
                         Practice
                     </Link>
-                    <Link href="/exam/ssc_chsl" className="hover:text-blue-600">
+                    <Link href="/exam" className="hover:text-blue-600">
                         Exam
                     </Link>
                     <Link href="/leaderboard" className="hover:text-blue-600">

@@ -8,29 +8,38 @@ export interface TypingStats {
   correctWords: number
   wrongWords: number
 }
-
 export function analyzeTyping(original: string, typed: string): TypingStats {
-  let correct = 0
-  let wrong = 0
-  let extra = 0
-  let missing = 0
+  const m = original.length
+  const n = typed.length
 
-  const maxLength = Math.max(original.length, typed.length)
+  const dp: number[][] = Array.from({ length: m + 1 }, () =>
+    Array(n + 1).fill(0)
+  )
 
-  for (let i = 0; i < maxLength; i++) {
-    const o = original[i]
-    const t = typed[i]
+  for (let i = 0; i <= m; i++) dp[i][0] = i
+  for (let j = 0; j <= n; j++) dp[0][j] = j
 
-    if (o && t) {
-      if (o === t) correct++
-      else wrong++
-    } else if (!o && t) {
-      extra++
-    } else if (o && !t) {
-      missing++
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (original[i - 1] === typed[j - 1]) {
+        dp[i][j] = dp[i - 1][j - 1]
+      } else {
+        dp[i][j] =
+          1 +
+          Math.min(
+            dp[i - 1][j],     // deletion
+            dp[i][j - 1],     // insertion
+            dp[i - 1][j - 1]  // substitution
+          )
+      }
     }
   }
 
+  const totalErrors = dp[m][n]
+  const correctChars = typed.length - totalErrors
+  const totalTyped = typed.length
+
+  // Word-level comparison
   const originalWords = original.trim().split(/\s+/)
   const typedWords = typed.trim().split(/\s+/)
 
@@ -43,12 +52,12 @@ export function analyzeTyping(original: string, typed: string): TypingStats {
   })
 
   return {
-    correctChars: correct,
-    wrongChars: wrong,
-    extraChars: extra,
-    missingChars: missing,
-    totalTyped: typed.length,
-    totalErrors: wrong + extra + missing,
+    correctChars: correctChars > 0 ? correctChars : 0,
+    wrongChars: totalErrors,
+    extraChars: 0,
+    missingChars: 0,
+    totalTyped,
+    totalErrors,
     correctWords,
     wrongWords,
   }
