@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation"
 import { examConfig, ExamType } from "@/lib/examConfig"
-import { paragraphs } from "@/lib/paragraphs"
+import { examParagraphs } from "@/lib/examParagraphs"
 
 export default function ExamInstructionsPage() {
     const params = useParams()
@@ -18,8 +18,8 @@ export default function ExamInstructionsPage() {
 
     const startExam = () => {
         // randomly select paragraph for fairness
-        const eligible = paragraphs.filter(
-            (p) => p.type === exam.paragraphType
+        const eligible = examParagraphs.filter(
+            (p) => p.exam === exam.paragraphType
         )
 
         const randomPara =

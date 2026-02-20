@@ -6,7 +6,8 @@ export const examConfig = {
     passingWpm: 35,
     passingAccuracy: 95,
     language: "english",
-    paragraphType: "ssc"
+    paragraphType: "ssc_chsl",
+    logo: "/ssc-chsl.png",
   },
 
   ssc_cgl: {
@@ -16,7 +17,8 @@ export const examConfig = {
     passingWpm: 40,
     passingAccuracy: 95,
     language: "english",
-    paragraphType: "ssc"
+    paragraphType: "ssc_cgl",
+    logo: "/ssc-cgl.png",
   },
 
   railway: {
@@ -26,7 +28,9 @@ export const examConfig = {
     passingWpm: 30,
     passingAccuracy: 90,
     language: "english",
-    paragraphType: "railway"
+    paragraphType: "railway",
+    logo: ""
+    
   }
 } as const
 

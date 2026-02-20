@@ -79,7 +79,7 @@ export default function TypingBox({
         <div className="space-y-4">
 
             {/* Highlighted Paragraph */}
-            <div className="p-6 bg-gray-900 text-gray-200 rounded leading-8 text-lg font-mono select-none">
+            <div className="p-6 bg-gray-900 text-gray-200 rounded leading-8 text-lg font-mono select-none h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600">
                 {originalText.split("").map((char, index) => {
                     let className = ""
 
