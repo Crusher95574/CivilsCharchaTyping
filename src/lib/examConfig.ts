@@ -21,15 +21,15 @@ export const examConfig = {
     logo: "/ssc-cgl.png",
   },
 
-  railway: {
+  rrb_ntpc: {
     name: "Railway Typing",
     duration: 600,
     backspaceAllowed: false,
     passingWpm: 35,
     passingAccuracy: 90,
     language: "english",
-    paragraphType: "railway",
-    logo: ""
+    paragraphType: "rrb_ntpc",
+    logo: "railway.png"
     
   }
 } as const

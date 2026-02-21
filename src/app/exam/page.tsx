@@ -3,8 +3,19 @@
 import Link from "next/link"
 import { examConfig, ExamType } from "@/lib/examConfig"
 
+type ExamConfigType = {
+    [key in ExamType]: {
+        name: string
+        logo?: string
+        duration: number
+        passingWpm: number
+        passingAccuracy: number
+    }
+}
+
 export default function ExamPage() {
     const exams = Object.keys(examConfig) as ExamType[]
+    const typedExamConfig = examConfig as ExamConfigType
 
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-8">
@@ -17,7 +28,7 @@ export default function ExamPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {exams.map((key) => {
-                    const exam = examConfig[key]
+                    const exam = typedExamConfig[key]
 
                     return (
                         <Link
