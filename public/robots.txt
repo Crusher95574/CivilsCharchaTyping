@@ -1,0 +1,21 @@
+# Free Civils Typing - Robots.txt
+User-agent: *
+Allow: /
+Allow: /practice
+Allow: /exam
+Allow: /leaderboard
+Allow: /register
+
+# Disallow private pages
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /login
+Disallow: /api/
+Disallow: /_next/
+Disallow: /result
+
+# Sitemap location
+Sitemap: https://free-civils-typing.com/sitemap.xml
+
+# Crawl delay (optional - allows crawlers to pause between requests)
+Crawl-delay: 1

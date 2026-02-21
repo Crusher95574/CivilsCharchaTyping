@@ -32,7 +32,8 @@ export const examConfig = {
     logo: "railway.png"
     
   }
-} as const
+}
+// } as const
 
 
 export type ExamType = keyof typeof examConfig

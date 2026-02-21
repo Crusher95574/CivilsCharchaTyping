@@ -7,6 +7,7 @@ import { paragraphs } from "@/lib/paragraphs"
 
 type View = "examList" | "paragraphList" | "overview"
 
+
 export default function PracticePage() {
     const router = useRouter()
 
@@ -31,7 +32,7 @@ export default function PracticePage() {
                         </div>
                     ) : (
                         <div className="w-20 h-20 rounded-full border-4 border-blue-500 bg-gray-200 flex items-center justify-center text-gray-400 font-bold">
-                            {selectedExam.name[0]}
+                                {selectedExam.name[0]}`
                         </div>
                     )}
                     <h1 className="text-3xl font-bold">{selectedExam.name}</h1>
@@ -115,10 +116,7 @@ export default function PracticePage() {
     }
 
     // STEP 1 → Full Page Exam Cards
-    const examEntries = Object.entries(examConfig) as [
-        ExamType,
-        (typeof examConfig)[ExamType]
-    ][]
+    const examEntries: [ExamType, typeof examConfig[ExamType]][] = Object.entries(examConfig) as [ExamType, typeof examConfig[ExamType]][];
 
     return (
         <div className="max-w-6xl mx-auto p-6">
