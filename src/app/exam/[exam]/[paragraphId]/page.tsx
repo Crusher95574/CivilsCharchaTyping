@@ -14,6 +14,48 @@ import {
 // ─────────────────────────────────────────────────────────────────────────────
 export type ErrorCategory = "general" | "obc_ews" | "sc_st"
 
+// ── Exam-specific allowed error % per category ────────────────────────────────
+// SSC CGL  : General 5% (Steno) / 20% (DEST) | OBC/EWS 25% | SC/ST 30%
+// SSC CHSL : General 7%                        | OBC/EWS 10% | SC/ST 10%
+// RRB NTPC : All categories 5% (flat, no category split)
+const EXAM_ERROR_CONFIG: Record<
+    string,
+    { label: string; categories: { value: ErrorCategory; label: string; allowed: number }[] }
+> = {
+    "ssc_cgl": {
+        label: "SSC CGL",
+        categories: [
+            { value: "general", label: "General / UR (20%)", allowed: 20 },
+            { value: "obc_ews", label: "OBC / EWS (25%)", allowed: 25 },
+            { value: "sc_st", label: "SC / ST (30%)", allowed: 30 },
+        ],
+    },
+    "ssc_chsl": {
+        label: "SSC CHSL",
+        categories: [
+            { value: "general", label: "General / UR (7%)", allowed: 7 },
+            { value: "obc_ews", label: "OBC / EWS (10%)", allowed: 10 },
+            { value: "sc_st", label: "SC / ST (10%)", allowed: 10 },
+        ],
+    },
+    "rrb_ntpc": {
+        label: "RRB NTPC",
+        categories: [
+            { value: "general", label: "All Categories (5%)", allowed: 5 },
+        ],
+    },
+}
+
+// Fallback for any other exam key
+const DEFAULT_EXAM_CONFIG = {
+    label: "Exam",
+    categories: [
+        { value: "general" as ErrorCategory, label: "General (20%)", allowed: 20 },
+        { value: "obc_ews" as ErrorCategory, label: "OBC / EWS (25%)", allowed: 25 },
+        { value: "sc_st" as ErrorCategory, label: "SC / ST (30%)", allowed: 30 },
+    ],
+}
+
 export interface WordResult {
     original: string
     typed: string | null
@@ -78,13 +120,12 @@ function isTransposition(
 
 export function analyzeExam(
     original: string, typed: string,
-    minutesTaken: number, category: ErrorCategory = "general"
+    minutesTaken: number, allowedErrorPercent: number = 20
 ): ExamResult {
     const origWords = tokenizeWords(original)
     const typedWords = tokenizeWords(typed)
     const totalOriginalWords = origWords.length
     const totalTypedChars = typed.length
-    const allowedErrorPercent = category === "general" ? 20 : category === "obc_ews" ? 25 : 30
 
     const wordResults: WordResult[] = []
     let fullMistakes = 0
@@ -244,7 +285,12 @@ export default function ExamTypingPage() {
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [input, setInput] = useState("")
     const [result, setResult] = useState<ExamResult | null>(null)
-    const [category, setCategory] = useState<ErrorCategory>("general")
+
+    // Resolve exam config from URL param (e.g. "ssc-cgl", "ssc-chsl", "rrb-ntpc")
+    const examKey = exam.toLowerCase()
+    const examConfig = EXAM_ERROR_CONFIG[examKey] ?? DEFAULT_EXAM_CONFIG
+    const [selectedCategoryIdx, setSelectedCategoryIdx] = useState(0)
+    const selectedCategory = examConfig.categories[selectedCategoryIdx]
 
     // ── Timer ──────────────────────────────────────────────────────────────────
     useEffect(() => {
@@ -265,7 +311,7 @@ export default function ExamTypingPage() {
     const triggerSubmit = () => {
         if (isSubmitted) return
         const minutesTaken = (paragraph.duration * 60 - timeLeft) / 60 || paragraph.duration
-        const res = analyzeExam(paragraph.text, input, minutesTaken, category)
+        const res = analyzeExam(paragraph.text, input, minutesTaken, selectedCategory.allowed)
         setResult(res)
         setIsSubmitted(true)
     }
@@ -306,15 +352,15 @@ export default function ExamTypingPage() {
                     </div>
 
                     <div className="flex items-center gap-6">
-                        {/* Category selector */}
+                        {/* Category selector — options driven by exam type */}
                         <select
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value as ErrorCategory)}
+                            value={selectedCategoryIdx}
+                            onChange={(e) => setSelectedCategoryIdx(Number(e.target.value))}
                             className="border rounded px-3 py-1.5 text-sm text-gray-700"
                         >
-                            <option value="general">General (20%)</option>
-                            <option value="obc_ews">OBC / EWS (25%)</option>
-                            <option value="sc_st">SC / ST (30%)</option>
+                            {examConfig.categories.map((cat, idx) => (
+                                <option key={cat.value} value={idx}>{cat.label}</option>
+                            ))}
                         </select>
 
                         {/* Timer */}
@@ -398,11 +444,7 @@ export default function ExamTypingPage() {
                             </div>
                             <p className="text-sm">
                                 Error rate: <strong>{result.errorPercent.toFixed(2)}%</strong> —
-                                Allowed: <strong>{result.allowedErrorPercent}%</strong> ({
-                                    category === "general" ? "General"
-                                        : category === "obc_ews" ? "OBC/EWS"
-                                            : "SC/ST"
-                                })
+                                Allowed: <strong>{result.allowedErrorPercent}%</strong> ({selectedCategory.label})
                             </p>
                         </div>
 

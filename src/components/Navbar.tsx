@@ -22,7 +22,7 @@ export default function Navbar() {
                     href="/"
                     className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500"
                 >
-                    CivilsTyping
+                    FreeCivilsTyping
                 </Link>
 
                 {/* Desktop Links */}
