@@ -129,7 +129,9 @@ export default function ExamTypingPage() {
             )}
 
             {/* Paragraph */}
-            <div className="border p-4 bg-gray-100 rounded">
+            <div className="p-5 bg-gray-100 rounded font-mono whitespace-pre-wrap leading-7 
+                max-h-80 overflow-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+
                 {paragraph.text}
             </div>
 

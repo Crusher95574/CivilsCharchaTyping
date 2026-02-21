@@ -20,11 +20,11 @@ export default function PracticeTypingPage() {
     const paragraphId = Number(params.paragraphId)
 
     if (!examKey || !(examKey in examConfig)) {
-        return <div className="p-6 text-red-500 font-semibold">Invalid Practice Link</div>
+        return <div className="p-6 text-red-500 font-semibold">Invalid Practice Link</div> 
     }
 
     const exam = examConfig[examKey]
-    const paragraphData = paragraphs.find((p) => p.id === paragraphId)
+    const paragraphData = paragraphs.find((p) => (p.id === paragraphId) && p.type === exam.paragraphType)
 
     if (!paragraphData) {
         return <div className="p-6 text-red-500 font-semibold">Paragraph Not Found</div>
@@ -100,14 +100,15 @@ export default function PracticeTypingPage() {
                         <div className="bg-gray-100 px-4 py-2 rounded shadow">Accuracy: {accuracy.toFixed(2)}%</div>
                         <div className="bg-gray-100 px-4 py-2 rounded shadow">Backspaces: {backspaceCount}</div>
                         <div className="bg-gray-100 px-4 py-2 rounded shadow">Errors: {liveStats?.totalErrors || 0}</div>
+                        {/* Timer */}
+                        <Timer
+                            time={time}
+                            setTime={setTime}
+                            onTimeUp={finishTest}
+                        />
                     </div>
 
-                    {/* Timer */}
-                    <Timer
-                        time={time}
-                        setTime={setTime}
-                        onTimeUp={finishTest}
-                    />
+                  
 
                     {/* Typing Box */}
                     <TypingBox

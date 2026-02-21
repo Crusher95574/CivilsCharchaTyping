@@ -20,7 +20,7 @@ export default function Timer({
     }, [time])
 
     return (
-        <div className="text-lg font-bold">
+        <div className="bg-gray-100 px-4 py-2 rounded shadow">
             Time: {time}s
         </div>
     )
