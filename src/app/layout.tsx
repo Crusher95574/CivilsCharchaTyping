@@ -40,6 +40,7 @@ export const metadata: Metadata = {
     canonical: "https://free-civils-typing.com",
   },
 }
+import { Analytics } from '@vercel/analytics/next'
 
 export default function RootLayout({
   children,
@@ -76,6 +77,7 @@ export default function RootLayout({
             })
           }}
         />
+        <Analytics />
       </body>
     </html>
   )
