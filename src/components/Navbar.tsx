@@ -9,9 +9,7 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Practice", href: "/practice" },
-        { name: "Exam", href: "/exam" },
-        // { name: "Dashboard", href: "/dashboard" },
-        // { name: "Login", href: "/login" },
+        { name: "Exam", href: "/exam" }
     ];
 
     return (
@@ -70,7 +68,37 @@ export default function Navbar() {
                     {/* {navLinks.map((link) => (
                         <Link
                             key={link.name}
-                            href={link.href}
+                            href={link.href}                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...                            import "./globals.css"
+                            import Navbar from "@/components/Navbar"
+                            import type { Metadata } from "next"
+                            import { Analytics } from '@vercel/analytics/next' // <-- Move this to the top
+                            
+                            // ...existing code...
                             className="block py-2 px-4 rounded-lg hover:bg-pink-50 hover:text-pink-500 transition-colors"
                             onClick={() => setIsOpen(false)}
                         >
