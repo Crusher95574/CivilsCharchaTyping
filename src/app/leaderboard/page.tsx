@@ -1,3 +1,15 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Leaderboard - Top Typing Performers | Civils Typing",
+  description: "See the top performers in the Civils Typing community. Check rankings based on WPM (words per minute) and accuracy in government exam typing tests.",
+  openGraph: {
+    title: "Leaderboard - Top Typing Performers",
+    description: "Compete with others and track top performers in typing speed and accuracy",
+    url: "https://civils-typing.com/leaderboard",
+  },
+}
+
 export default function LeaderboardPage() {
     const mockUsers = [
         { name: "Rahul", wpm: 65 },

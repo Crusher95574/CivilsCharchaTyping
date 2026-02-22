@@ -1,3 +1,13 @@
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Dashboard - Your Typing Progress | Civils Typing",
+  description: "View your typing performance statistics, best WPM, accuracy rates, and progress tracking across all practice sessions and exams.",
+  robots: {
+    index: false,
+  },
+}
+
 export default function DashboardPage() {
     return (
         <div className="space-y-6">

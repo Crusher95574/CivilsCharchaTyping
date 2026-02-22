@@ -1,0 +1,76 @@
+{
+  "name": "Free Civils Typing - Government Exam Practice",
+  "short_name": "Free Civils Typing",
+  "description": "Free Civils Typing: Practice typing for government exams with real exam patterns. Master SSC CHSL, CGL, and RRB typing tests online.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Start Practice",
+      "short_name": "Practice",
+      "description": "Start a typing practice session",
+      "url": "/practice?mode=practice",
+      "icons": [
+        {
+          "src": "/shortcut-practice.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Take Exam",
+      "short_name": "Exam",
+      "description": "Take a full-length typing exam",
+      "url": "/exam",
+      "icons": [
+        {
+          "src": "/shortcut-exam.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}

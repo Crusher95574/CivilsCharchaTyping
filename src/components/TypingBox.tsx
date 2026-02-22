@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { analyzeTyping } from "@/lib/typingEngine"
 
 interface Props {
@@ -9,7 +9,8 @@ interface Props {
     setTypedText: (value: string) => void
     setLiveStats: (stats: any) => void
     backspaceCount: number
-    setBackspaceCount: (value: number) => void
+    setBackspaceCount: React.Dispatch<React.SetStateAction<number>>
+    backspaceAllowed?: boolean
 }
 
 export default function TypingBox({
@@ -19,28 +20,66 @@ export default function TypingBox({
     setLiveStats,
     backspaceCount,
     setBackspaceCount,
+    backspaceAllowed = true,
 }: Props) {
 
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    // Autofocus on mount
+    useEffect(() => {
+        textareaRef.current?.focus()
+    }, [])
+
+    // Live typing analysis
     useEffect(() => {
         const stats = analyzeTyping(originalText, typedText)
         setLiveStats(stats)
-    }, [typedText])
+    }, [typedText, originalText, setLiveStats])
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const handleKeyDown = (
+        e: React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
+        // Block backspace if not allowed
+        if (!backspaceAllowed && e.key === "Backspace") {
+            e.preventDefault()
+            return
+        }
+
         if (e.key === "Backspace") {
-            setBackspaceCount(backspaceCount + 1)
+            setBackspaceCount(prev => prev + 1)
+        }
+
+        // Prevent typing beyond paragraph length
+        if (
+            typedText.length >= originalText.length &&
+            e.key !== "Backspace"
+        ) {
+            e.preventDefault()
         }
     }
 
-    const handlePaste = (e: React.ClipboardEvent) => {
+    const handlePaste = (
+        e: React.ClipboardEvent<HTMLTextAreaElement>
+    ) => {
         e.preventDefault()
+    }
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        const value = e.target.value
+
+        // Prevent overflow
+        if (value.length <= originalText.length) {
+            setTypedText(value)
+        }
     }
 
     return (
         <div className="space-y-4">
 
             {/* Highlighted Paragraph */}
-            <div className="p-6 bg-gray-900 text-gray-200 rounded leading-8 text-lg font-mono">
+            <div className="p-6 bg-gray-900 text-gray-200 rounded leading-8 text-lg font-mono select-none h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600">
                 {originalText.split("").map((char, index) => {
                     let className = ""
 
@@ -52,7 +91,7 @@ export default function TypingBox({
                     }
 
                     if (index === typedText.length) {
-                        className += " bg-yellow-600 text-black"
+                        className += " bg-yellow-500 text-black"
                     }
 
                     return (
@@ -63,12 +102,13 @@ export default function TypingBox({
                 })}
             </div>
 
-            {/* Input */}
+            {/* Input Area */}
             <textarea
-                className="w-full p-4 border rounded text-lg font-mono bg-gray-800 text-white"
+                ref={textareaRef}
+                className="w-full p-4 border rounded text-lg font-mono bg-gray-800 text-white resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 rows={6}
                 value={typedText}
-                onChange={(e) => setTypedText(e.target.value)}
+                onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 onPaste={handlePaste}
             />
