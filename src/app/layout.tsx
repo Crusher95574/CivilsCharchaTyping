@@ -1,6 +1,7 @@
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import type { Metadata } from "next"
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: "Free Civils Typing - Government Exam Practice - SSC, CGL, RRB",
