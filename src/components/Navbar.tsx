@@ -9,9 +9,7 @@ export default function Navbar() {
 
     const navLinks = [
         { name: "Practice", href: "/practice" },
-        { name: "Exam", href: "/exam" },
-        // { name: "Dashboard", href: "/dashboard" },
-        // { name: "Login", href: "/login" },
+        { name: "Exam", href: "/exam" }
     ];
 
     return (
