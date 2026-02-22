@@ -45,7 +45,7 @@ export default function ResultPage() {
         <div className="max-w-5xl mx-auto p-8 space-y-8">
 
             {/* Stats Section */}
-            <div className="grid grid-cols-3 gap-6 text-center">
+            <div className="grid grid-cols-2 gap-6 text-center">
 
                 <div className="bg-gray-900 text-white p-6 rounded">
                     <h2 className="text-xl font-bold">{wpm}</h2>
@@ -65,11 +65,6 @@ export default function ResultPage() {
                 <div className="bg-gray-900 text-white p-6 rounded">
                     <h2 className="text-xl font-bold">{backspaceCount}</h2>
                     <p>Backspaces</p>
-                </div>
-
-                <div className="bg-gray-900 text-white p-6 rounded">
-                    <h2 className="text-xl font-bold">{duration / 60} min</h2>
-                    <p>Duration</p>
                 </div>
 
             </div>
